@@ -6,6 +6,7 @@ struct ContentView: View {
     @StateObject private var vm = PokerViewModel()
     @StateObject private var pip = PiPManager()
     @State private var showBroadcastPicker = false
+    private let keepAlive = BackgroundKeepAlive()
 
     var body: some View {
         VStack(spacing: 10) {
@@ -60,6 +61,8 @@ struct ContentView: View {
             pip.update(decision: vm.decision, table: vm.table)
         }
         .onAppear {
+            // socket 模式必须保活，否则切到牌桌后主 App 被挂起
+            keepAlive.start()
             reader.onPixelBuffer = { pb in vm.process(pixelBuffer: pb) }
             reader.start()
         }

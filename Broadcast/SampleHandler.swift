@@ -2,47 +2,58 @@ import ReplayKit
 import CoreMedia
 import CoreVideo
 
-/// 广播上传扩展：系统把整屏帧流交给我们（RPBroadcastProcessModeSampleBuffer）
-/// 注意：iOS 扩展内存上限很紧（约 50MB），只做降采样 + 写共享内存，不做识别
+/// 广播上传扩展
+/// 传输策略：优先 App Group 共享内存；拿不到容器就降级到本地 socket
 final class SampleHandler: RPBroadcastSampleHandler {
 
-    private var writer: FrameWriter?
-    private var frames: Int = 0
+    private var writer: FrameWriter?      // App Group 模式
+    private var sender: FrameSender?      // socket 模式
+    private var frames = 0
     private var startedAt = Date()
     private var lastLogAt = Date()
 
     override func broadcastStarted(withSetupInfo setupInfo: [String: NSObject]?) {
-        writer = FrameWriter()
         frames = 0
         startedAt = Date()
         lastLogAt = Date()
-        NSLog("[DeepEye] broadcast started, writer=%@",
-              writer == nil ? "nil(APP GROUP 未配置?)" : "ok")
+
+        if let w = FrameWriter() {
+            writer = w
+            NSLog("[DeepEye] transport = APP GROUP (共享内存)")
+        } else {
+            let s = FrameSender()
+            s.start()
+            sender = s
+            NSLog("[DeepEye] transport = SOCKET (127.0.0.1:\(FrameTransport.port))")
+        }
     }
 
-    override func broadcastPaused() {
-        NSLog("[DeepEye] broadcast paused")
-    }
-
-    override func broadcastResumed() {
-        NSLog("[DeepEye] broadcast resumed")
-    }
+    override func broadcastPaused() { NSLog("[DeepEye] paused") }
+    override func broadcastResumed() { NSLog("[DeepEye] resumed") }
 
     override func broadcastFinished() {
-        NSLog("[DeepEye] broadcast finished, frames=%d", frames)
+        NSLog("[DeepEye] finished, frames=%d transport=%@", frames,
+              writer != nil ? "appgroup" : "socket")
         writer = nil
+        sender?.stop()
+        sender = nil
     }
 
     override func processSampleBuffer(_ sampleBuffer: CMSampleBuffer,
                                       with sampleBufferType: RPSampleBufferType) {
         guard sampleBufferType == .video else { return }
         guard let pb = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
-        guard let writer else { return }
 
-        writer.write(pixelBuffer: pb)
+        if let writer {
+            writer.write(pixelBuffer: pb)
+        } else if let sender {
+            sender.send(pixelBuffer: pb)
+        } else {
+            return
+        }
         frames += 1
 
-        if Date().timeIntervalSince(lastLogAt) >= 2 {
+        if Date().timeIntervalSince(lastLogAt) >= 3 {
             lastLogAt = Date()
             let sec = max(Date().timeIntervalSince(startedAt), 0.001)
             NSLog("[DeepEye] frames=%d fps=%.1f", frames, Double(frames) / sec)
