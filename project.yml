@@ -1,0 +1,68 @@
+# 用 xcodegen 生成 Xcode 工程（GitHub Actions 里会自动跑）
+# 本地 Mac 也可以：brew install xcodegen && xcodegen generate
+
+name: DeepEye
+options:
+  bundleIdPrefix: com.deepeye
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+  # 不签名（越狱设备自己处理）
+  developmentLanguage: zh-Hans
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    IPHONEOS_DEPLOYMENT_TARGET: "16.0"
+    TARGETED_DEVICE_FAMILY: "1,2"
+    CODE_SIGNING_ALLOWED: "NO"
+    CODE_SIGNING_REQUIRED: "NO"
+    CODE_SIGN_IDENTITY: ""
+    ENABLE_BITCODE: "NO"
+    # 关闭自动生成 Info.plist，用我们自己的
+    GENERATE_INFOPLIST_FILE: "NO"
+
+targets:
+  # ---------------- 主 App ----------------
+  DeepEye:
+    type: application
+    platform: iOS
+    sources:
+      - path: App
+        excludes:
+          - "Info.plist"
+          - "*.entitlements"
+      - path: Shared
+      - path: Vision
+      - path: Brain
+      - path: PiP
+      # 模型：作为资源打包
+      - path: Models
+        type: folder
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.deepeye.app
+        INFOPLIST_FILE: App/Info.plist
+        CODE_SIGN_ENTITLEMENTS: App/DeepEye.entitlements
+        PRODUCT_NAME: DeepEye
+    dependencies:
+      - target: Broadcast
+        embed: true
+
+  # ---------------- 录屏扩展 ----------------
+  Broadcast:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: Broadcast
+        excludes:
+          - "Info.plist"
+          - "*.entitlements"
+      - path: Shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.deepeye.app.Broadcast
+        INFOPLIST_FILE: Broadcast/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Broadcast/Broadcast.entitlements
+        PRODUCT_NAME: Broadcast

@@ -1,0 +1,15 @@
+﻿# Xcode
+build/
+DerivedData/
+*.xcuserstate
+*.xcworkspace/xcuserdata/
+
+# macOS
+.DS_Store
+
+# 编译产物
+*.ipa
+Payload/
+
+# 本地配置
+*.local.xcconfig

@@ -1,0 +1,149 @@
+[
+  {
+    "metadataOutputVersion" : "3.0",
+    "userDefinedMetadata" : {
+      "IoU threshold" : "0.7",
+      "Confidence threshold" : "0.25",
+      "stride" : "32",
+      "channels" : "3",
+      "docs" : "https:\/\/docs.ultralytics.com",
+      "task" : "detect",
+      "imgsz" : "[640, 640]",
+      "date" : "2025-11-14T19:02:18.915955",
+      "args" : "{'batch': 1, 'half': False, 'int8': True, 'nms': True}",
+      "batch" : "1",
+      "names" : "{0: 'zdc', 1: 'player', 2: 'btn', 3: 'money', 4: 'hong', 5: 'hei', 6: 'mh', 7: 'fp', 8: 'A', 9: '2', 10: '3', 11: '4', 12: '5', 13: '6', 14: '7', 15: '8', 16: '9', 17: '10', 18: 'J', 19: 'Q', 20: 'K'}"
+    },
+    "classLabels" : [
+      "zdc",
+      "player",
+      "btn",
+      "money",
+      "hong",
+      "hei",
+      "mh",
+      "fp",
+      "A",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "J",
+      "Q",
+      "K"
+    ],
+    "availability" : {
+      "macOS" : "11.0",
+      "tvOS" : "14.0",
+      "visionOS" : "1.0",
+      "watchOS" : "7.0",
+      "iOS" : "14.0",
+      "macCatalyst" : "14.0"
+    },
+    "inputSchema" : [
+      {
+        "height" : "640",
+        "colorspace" : "RGB",
+        "isOptional" : "0",
+        "width" : "640",
+        "isColor" : "1",
+        "formattedType" : "Image (Color 640 × 640)",
+        "hasSizeFlexibility" : "0",
+        "type" : "Image",
+        "shortDescription" : "Input image",
+        "name" : "image"
+      },
+      {
+        "isOptional" : "0",
+        "formattedType" : "Double",
+        "type" : "Double",
+        "name" : "iouThreshold",
+        "shortDescription" : "(optional) IoU threshold override (default: 0.7)"
+      },
+      {
+        "isOptional" : "0",
+        "formattedType" : "Double",
+        "type" : "Double",
+        "name" : "confidenceThreshold",
+        "shortDescription" : "(optional) Confidence threshold override (default: 0.25)"
+      }
+    ],
+    "outputSchema" : [
+      {
+        "dataType" : "Float32",
+        "hasShapeFlexibility" : "1",
+        "isOptional" : "0",
+        "shapeFlexibility" : "0... × 21",
+        "shapeRange" : "[[0, -1], [21, 21]]",
+        "formattedType" : "MultiArray (Float32 0 × 21)",
+        "type" : "MultiArray",
+        "shape" : "[0, 21]",
+        "name" : "confidence",
+        "shortDescription" : "Boxes × Class confidence (see user-defined metadata \"classes\")"
+      },
+      {
+        "dataType" : "Float32",
+        "hasShapeFlexibility" : "1",
+        "isOptional" : "0",
+        "shapeFlexibility" : "0... × 4",
+        "shapeRange" : "[[0, -1], [4, 4]]",
+        "formattedType" : "MultiArray (Float32 0 × 4)",
+        "type" : "MultiArray",
+        "shape" : "[0, 4]",
+        "name" : "coordinates",
+        "shortDescription" : "Boxes × [x, y, width, height] (relative to image size)"
+      }
+    ],
+    "modelParameters" : [
+
+    ],
+    "storagePrecision" : "Int8",
+    "neuralNetworkLayerTypeHistogram" : {
+      "Concat" : 19,
+      "Convolution" : 120,
+      "Transpose" : 50,
+      "ReshapeStatic" : 37,
+      "UpsampleINVALID" : 2,
+      "MultiplyBroadcastable" : 1,
+      "LoadConstantND" : 2,
+      "ActivationSigmoid" : 82,
+      "Softmax" : 1,
+      "SplitND" : 14,
+      "SliceStatic" : 1,
+      "Multiply" : 91,
+      "Add" : 38,
+      "ConcatND" : 3,
+      "SoftmaxND" : 8,
+      "ActivationLinear" : 2,
+      "BatchedMatmul" : 16
+    },
+    "method" : "predict",
+    "version" : "8.3.161",
+    "isUpdatable" : "0",
+    "specificationVersion" : 5,
+    "stateSchema" : [
+
+    ],
+    "computePrecision" : "Float16",
+    "shortDescription" : "Ultralytics YOLO12n model trained on \/www\/wwwroot\/gpu\/datasets\/yolo_a1\/data.yaml",
+    "license" : "AGPL-3.0 License (https:\/\/ultralytics.com\/license)",
+    "generatedClassName" : "best_wk",
+    "author" : "Ultralytics",
+    "modelType" : {
+      "name" : "MLModelType_pipeline",
+      "structure" : [
+        {
+          "name" : "MLModelType_neuralNetwork"
+        },
+        {
+          "name" : "MLModelType_nonMaximumSuppression"
+        }
+      ]
+    }
+  }
+]
