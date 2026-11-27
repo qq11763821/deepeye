@@ -7,7 +7,9 @@ on:
 
 jobs:
   build:
-    runs-on: macos-14
+    # macos-13 = Intel x64 标准 runner（免费账号可用）
+    # 不要用 macos-14（默认解析成 arm64 XL，免费账号不支持）
+    runs-on: macos-13
     timeout-minutes: 30
 
     steps:
